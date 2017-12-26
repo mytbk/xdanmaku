@@ -88,17 +88,30 @@ int main(int argc, char *argv[])
 {
 	pthread_t sub_thread;
 
-	const char *fontname = "思源黑体 CN:size=40";
+	const char *fontname = "Source Han Sans CN Medium:size=40";
+	const char *url = "https://dm.tuna.moe:8443";
+	const char *channel = "demo";
 
-	if (argc<3) {
-		fprintf(stderr, "usage: %s <url> <channel>\n", argv[0]);
-		return 1;
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-fn")==0) {
+			fontname = argv[++i];
+		} else if (strcmp(argv[i], "-u")==0) {
+			url = argv[++i];
+		} else if (strcmp(argv[i], "-c")==0) {
+			channel = argv[++i];
+		} else {
+			fprintf(stderr, "usage: %s [-fn font] <-u url> <-c channel>\n", argv[0]);
+			fprintf(stderr, "  url: danmaku server url <default: https://dm.tuna.moe:8443>\n");
+			fprintf(stderr, "  channel: danmaku channel <default: demo>\n");
+			fprintf(stderr, "  font: <default: %s>\n", fontname);
+			return 1;
+		}
 	}
 
 	danmaku_init(&di, fontname);
 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
-	new_subscriber(&cs, argv[1], argv[2]);
+	new_subscriber(&cs, url, channel);
 
 	if (cs.curl) {
 		if (pthread_create(&sub_thread, NULL, _subscribe, NULL) != 0) {
