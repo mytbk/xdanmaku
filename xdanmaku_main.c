@@ -21,6 +21,7 @@
 #include "subscribe.h"
 #include "danmaku.h"
 #include "danlist.h"
+#include <X11/extensions/Xinerama.h>
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 int count = 1;
@@ -91,24 +92,46 @@ int main(int argc, char *argv[])
 	const char *fontname = "Source Han Sans CN Medium:size=40";
 	const char *url = "https://dm.tuna.moe:8443";
 	const char *channel = "demo";
+	int scr = -1;
+
+	const char *usage =
+		"usage: %s [-fn font] [-s screen] <-u url> <-c channel>\n"
+		"  url: danmaku server url <default: https://dm.tuna.moe:8443>\n"
+		"  channel: danmaku channel <default: demo>\n"
+		"  font: <default: %s>\n"
+		"  screen: <default all screens>\n";
 
 	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "-fn")==0) {
+		if (strcmp(argv[i], "-fn") == 0) {
 			fontname = argv[++i];
-		} else if (strcmp(argv[i], "-u")==0) {
+		} else if (strcmp(argv[i], "-u") == 0) {
 			url = argv[++i];
-		} else if (strcmp(argv[i], "-c")==0) {
+		} else if (strcmp(argv[i], "-c") == 0) {
 			channel = argv[++i];
+		} else if (strcmp(argv[i], "-s") == 0) {
+			scr = atoi(argv[++i]);
 		} else {
-			fprintf(stderr, "usage: %s [-fn font] <-u url> <-c channel>\n", argv[0]);
-			fprintf(stderr, "  url: danmaku server url <default: https://dm.tuna.moe:8443>\n");
-			fprintf(stderr, "  channel: danmaku channel <default: demo>\n");
-			fprintf(stderr, "  font: <default: %s>\n", fontname);
+			fprintf(stderr, usage, argv[0], fontname);
 			return 1;
 		}
 	}
 
 	danmaku_init(&di, fontname);
+	if (scr >= 0) {
+		int num;
+		XineramaScreenInfo *scrinfo = XineramaQueryScreens(di.dpy, &num);
+		if (scr < num) {
+			XineramaScreenInfo *si = &scrinfo[scr];
+			di.x_org = si->x_org;
+			di.y_org = si->y_org;
+			di.width = si->width;
+			di.height = si->height;
+			fprintf(stderr,
+				"Xinerama info of the selected screen:\n"
+				"  number: %d, x: %d, y: %d, width: %d, height: %d\n",
+				si->screen_number, si->x_org, si->y_org, si->width, si->height);
+		}
+	}
 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	new_subscriber(&cs, url, channel);
