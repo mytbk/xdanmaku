@@ -26,7 +26,7 @@ typedef struct {
 	int depth;
 	Colormap colormap;
 	XftFont *font;
-	int height, width;
+	int x_org, y_org, width, height;
 } display_info;
 
 typedef enum { DAN_L2R, DAN_R2L, DAN_TOP, DAN_BOTTOM, OTHER } danmaku_type;

@@ -50,6 +50,7 @@ void danmaku_init(display_info *d, const char *fontname)
 
 	d->dpy = dpy;
 	d->root_window = root_window;
+	d->x_org = d->y_org = 0;
 	d->height = DisplayHeight(dpy, scr);
 	d->width = DisplayWidth(dpy, scr);
 	d->font = XftFontOpenName(dpy, scr, fontname);
@@ -151,13 +152,19 @@ danmaku_info *create_danmaku(display_info *d, const char *s, XftColor *xcolor,
 	return dan;
 }
 
+static void _MoveWindow(display_info *di, Window w, int x, int y)
+{
+	Display *dpy = di->dpy;
+	int x_org = di->x_org;
+	int y_org = di->y_org;
+
+	XMoveWindow(dpy, w, x_org+x, y_org+y);
+}
+
 void issue_danmaku(danmaku_info *dan)
 {
-	Display *dpy = dan->di->dpy;
-	Window w = dan->w;
-
-	XMoveWindow(dpy, w, dan->x, dan->y);
-	XSync(dpy, False);
+	_MoveWindow(dan->di, dan->w, dan->x, dan->y);
+	XSync(dan->di->dpy, False);
 }
 
 void move_danmaku(danmaku_info *dan)
@@ -165,7 +172,7 @@ void move_danmaku(danmaku_info *dan)
 	dan->x += dan->dx;
 	dan->y += dan->dy;
 	dan->ttl--;
-	XMoveWindow(dan->di->dpy, dan->w, dan->x, dan->y);
+	_MoveWindow(dan->di, dan->w, dan->x, dan->y);
 }
 
 void free_danmaku(danmaku_info *dan)
