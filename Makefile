@@ -1,5 +1,6 @@
-LDFLAGS=-lXft -lX11 -lXinerama -lcurl -luuid -ljson-c -pthread
-CFLAGS=$(shell pkg-config --cflags xft) -pthread
+LDLIBS=-lXft -lX11 -lXinerama -lcurl -luuid -ljson-c
+LDFLAGS+=-pthread
+CFLAGS+=$(shell pkg-config --cflags xft) -pthread
 
 xdanmaku_main: xdanmaku_main.o subscribe.o danmaku.o danlist.o
 
