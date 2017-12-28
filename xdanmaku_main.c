@@ -85,6 +85,12 @@ void *_subscribe(void* arg)
 	}
 }
 
+static void print_scrinfo(XineramaScreenInfo *si)
+{
+	fprintf(stderr, "  number: %d, x: %d, y: %d, width: %d, height: %d\n",
+			si->screen_number, si->x_org, si->y_org, si->width, si->height);
+}
+
 int main(int argc, char *argv[])
 {
 	pthread_t sub_thread;
@@ -126,10 +132,15 @@ int main(int argc, char *argv[])
 			di.y_org = si->y_org;
 			di.width = si->width;
 			di.height = si->height;
-			fprintf(stderr,
-				"Xinerama info of the selected screen:\n"
-				"  number: %d, x: %d, y: %d, width: %d, height: %d\n",
-				si->screen_number, si->x_org, si->y_org, si->width, si->height);
+			fprintf(stderr, "Xinerama info of the selected screen:\n");
+			print_scrinfo(si);
+		} else {
+			fprintf(stderr, "Screen %d not found!\n"
+					"Xinerama info of all screens:\n", scr);
+			for (int i = 0; i < num; i++)
+				print_scrinfo(&scrinfo[i]);
+
+			return 1;
 		}
 	}
 
