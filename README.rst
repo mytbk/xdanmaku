@@ -6,7 +6,14 @@ xdanmaku is a danmaku client for `tuna/gdanmaku-server <https://github.com/tuna/
 Usage
 -----
 
-To use it, just run `xdanmaku <server> <channel>`, for example `xdanmaku https://dm.tuna.moe:8443 demo` and open https://dm.tuna.moe:8443/channel/demo to post danmakus.
+::
+
+  xdanmaku [-fn font] [-s screen] <-u url> <-c channel>
+    url: danmaku server url <default: https://dm.tuna.moe:8443>
+    channel: danmaku channel <default: demo>
+    font: <default: Source Han Sans CN Medium:size=40>
+    screen: <default all screens>
+
 
 Install
 -------
