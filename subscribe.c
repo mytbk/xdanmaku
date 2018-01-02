@@ -58,15 +58,26 @@ typedef struct
 	struct curl_slist *chunk;
 } curl_subscriber;
 
-void new_subscriber(curl_subscriber *cs, const char *url, const char *chn)
+static const char *subid_s = "X-GDANMAKU-SUBSCRIBER-ID: ";
+static const char *authkey_s = "X-GDANMAKU-AUTH-KEY: ";
+
+void new_subscriber(curl_subscriber *cs, const char *url, const char *chn, const char *passwd)
 {
 	CURL *curl = curl_easy_init();
 
 	char id_header[64];
-	strcpy(id_header, "X-GDANMAKU-SUBSCRIBER-ID: ");
-	uuidgen(id_header+26);
+	strcpy(id_header, subid_s);
+	uuidgen(id_header + strlen(subid_s));
 	struct curl_slist *chunk = NULL;
 	chunk = curl_slist_append(chunk, id_header);
+
+	if (passwd != NULL) {
+		int L = strlen(authkey_s);
+		char *authkey_header = (char*)malloc(L + strlen(passwd) + 1);
+		strcpy(authkey_header, authkey_s);
+		strcpy(authkey_header + L, passwd);
+		chunk = curl_slist_append(chunk, authkey_header);
+	}
 
 	const char *api = "/api/v1.1/channels/%s/danmaku";
 	int ulen = strlen(url);

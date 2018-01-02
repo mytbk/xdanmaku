@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 
-	new_subscriber(&cs, argv[1], argv[2]);
+	new_subscriber(&cs, argv[1], argv[2], NULL);
 
 	if (cs.curl) {
 		while (1) {

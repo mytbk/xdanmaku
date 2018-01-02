@@ -26,6 +26,6 @@ typedef struct
 	struct curl_slist *chunk;
 } curl_subscriber;
 
-void new_subscriber(curl_subscriber *cs, const char *url, const char *chn);
+void new_subscriber(curl_subscriber *cs, const char *url, const char *chn, const char *passwd);
 void free_subscriber(curl_subscriber *cs);
 json_object *do_subscribe(curl_subscriber *cs);

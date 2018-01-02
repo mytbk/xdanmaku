@@ -98,12 +98,14 @@ int main(int argc, char *argv[])
 	const char *fontname = "Source Han Sans CN Medium:size=40";
 	const char *url = "https://dm.tuna.moe:8443";
 	const char *channel = "demo";
+	const char *passwd = NULL;
 	int scr = -1;
 
 	const char *usage =
-		"usage: %s [-fn font] [-s screen] <-u url> <-c channel>\n"
+		"usage: %s [-fn font] [-s screen] <-u url> <-c channel> [-p passwd]\n"
 		"  url: danmaku server url <default: https://dm.tuna.moe:8443>\n"
 		"  channel: danmaku channel <default: demo>\n"
+		"  passwd: password for the channel <default: NULL>\n"
 		"  font: <default: %s>\n"
 		"  screen: <default all screens>\n";
 
@@ -114,6 +116,8 @@ int main(int argc, char *argv[])
 			url = argv[++i];
 		} else if (strcmp(argv[i], "-c") == 0) {
 			channel = argv[++i];
+		} else if (strcmp(argv[i], "-p") == 0) {
+			passwd = argv[++i];
 		} else if (strcmp(argv[i], "-s") == 0) {
 			scr = atoi(argv[++i]);
 		} else {
@@ -145,7 +149,7 @@ int main(int argc, char *argv[])
 	}
 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
-	new_subscriber(&cs, url, channel);
+	new_subscriber(&cs, url, channel, passwd);
 
 	if (cs.curl) {
 		if (pthread_create(&sub_thread, NULL, _subscribe, NULL) != 0) {
