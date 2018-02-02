@@ -42,7 +42,6 @@ static void uuidgen(char *u)
 static size_t get_json_callback(void *contents, size_t size, size_t nmemb, void *userp)
 {
 	size_t realsize = size * nmemb;
-	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
 
 	json_tokener *tok = json_tokener_new();
 	*((json_object **)userp) = json_tokener_parse_ex(tok, contents, realsize);
